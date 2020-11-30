@@ -1,0 +1,26 @@
+on:
+  pull_request:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Find go version
+      run: |
+        ls -Fal
+    - name: Find go version
+      run: |
+        GO_VERSION=$(awk '/^go/ {print $2};' go.mod)
+        echo "::set-output name=version::${GO_VERSION}"
+      id: awk_gomod
+    - name: show output
+      run: |
+        echo "${{ steps.awk_gomod.outputs.version }}"
+    - name: Ensure go version
+      uses: actions/setup-go@v2
+      with:
+        go-version: "${{ steps.awk_gomod.outputs.version }}"
+    - name: Show version
+      run: go version
